@@ -1,0 +1,194 @@
+Next.js + PWA + responsive frontend
+
+================================================================================
+ASTROVEDA — PROJECT SUMMARY
+AI-powered Vedic Astrology & Spiritual Mobile Platform
+================================================================================
+
+WHAT IS ASTROVEDA
+------------------
+AstraVeda is a real, revenue-generating mobile platform (not a demo) that blends
+Vedic astrology, palmistry, face reading, Vastu, aura reading, dream analysis,
+AI voice consultations, and temple/puja e-commerce into one app. The product is
+the native mobile app built with Expo/React Native — the website is a marketing
+landing page only.
+
+Every feature that touches money is server-authoritative: payments, checkouts,
+wallet balances and order state are all computed and verified on the backend,
+never trusted from the client.
+
+--------------------------------------------------------------------------------
+TECH STACK
+--------------------------------------------------------------------------------
+Frontend  : Expo SDK 57, Expo Router, TypeScript, React Native Reanimated,
+            React Native SVG, Clerk (auth), Zustand
+Backend   : FastAPI (Python), deployed on Render
+Database  : Neon Postgres (serverless)
+Payments  : Razorpay (checkout + webhooks, WebView today, native SDK planned)
+Auth      : Clerk (native Google Sign-In + email OTP)
+Astro math: Self-hosted with pyswisseph (Swiss Ephemeris) — no third-party
+            astrology API anywhere in the product
+
+--------------------------------------------------------------------------------
+AI / LLM MODELS USED
+--------------------------------------------------------------------------------
+1. Sarvam AI
+   - sarvam-105b        → chat/narrative generation (Kundali, Palm, Face, Aura,
+                           Dream, Horoscope readings — turns computed facts into
+                           natural-language readings)
+   - sarvam-translate:v1 → text translation for 7-language support
+   - Bulbul (TTS)        → cloud text-to-speech for the Welcome Robot mascot's voice
+   - Sarvam Voice Agents (Samvaad) → fully automated OUTBOUND phone call AI
+                           astrologer for the "Ask AstraVeda" ₹99 consultation
+
+2. Google Gemini
+   - gemini-3.6-flash → vision model for all camera-based readings:
+       - Palm scan (Hasta Samudrika features from a photo)
+       - Face reading (Mukha Samudrika features from a selfie)
+       - Aura scan (colour palette from a selfie)
+       - Vastu AI (room photo → score/elements/doshas/remedies)
+   Pattern used throughout: "Gemini sees, Sarvam says" — Gemini extracts
+   structured features from an image, Sarvam writes the human narrative.
+
+Notably rejected: Sarvam has no general vision model (only document OCR) —
+that's why Gemini handles all image-based readings. VedAstro and vedastro
+(pip package) were evaluated and rejected because they're third-party API
+wrappers, not self-hosted — conflicts with the "own the astrology math" principle.
+
+--------------------------------------------------------------------------------
+CORE APP SECTIONS
+--------------------------------------------------------------------------------
+- Home screen        : Hero carousel (Ganesha/Krishna/Ved Vyasa/family astrologer),
+                        daily cosmic guidance cards, "Ask AstraVeda" voice button,
+                        6-tool grid, daily horoscope entry, virtual puja banner
+- Astrology tab       : Segmented gallery — Charts | Palms | Faces | Auras
+- Ask tab             : Voice consultation history + booking entry point
+- Puja tab            : Temple & puja e-commerce entry point
+- Profile tab         : Auth state, credits/wallet display, sign-in/out
+- Bottom tab bar      : Home / Astrology / Ask (raised center flower) / Puja / Profile
+
+--------------------------------------------------------------------------------
+FEATURES DELIVERED
+--------------------------------------------------------------------------------
+
+1. AUTHENTICATION
+   - Clerk-based, native Google Sign-In (Android Credential Manager) + email OTP
+   - Passwordless, required username on first sign-up
+   - Guest browsing allowed (no login wall on the app itself)
+   - Clerk → Neon user sync via webhook + request-time upsert
+
+2. MY KUNDLI (₹15/chart)
+   - Self-hosted birth chart engine (pyswisseph): Lagna, planets, nakshatras,
+     Avakhada, full Vimshottari Dasha (Maha + Antar)
+   - City autocomplete via free Open-Meteo geocoding
+   - D1 North-Indian chart rendered in SVG
+   - Sarvam-generated English narrative reading
+   - Multi-chart gallery — save charts for Self/Spouse/Child/Family/Friends
+   - Razorpay-gated: every generation costs ₹15, no de-dupe (by design)
+
+3. PALM READING — Hasta Rekha (₹40)
+   - Two paths: live camera scan (Gemini Vision reads the photo) or a guided
+     4-step questionnaire (Hand/Lines/Mounts/Marks)
+   - Sarvam writes the 7-section reading
+   - Photo never stored server-side (kept on-device only)
+   - Per-person gallery with "Scanned" vs "Guided" markers
+
+4. FACE READING — Mukha Samudrika (₹45)
+   - Front-camera selfie → Gemini Vision → Sarvam narrative
+   - Guided 3-question fallback if camera access is denied
+
+5. AURA SCAN (₹60)
+   - Selfie + 4-question energy quiz → Gemini picks an aura colour palette
+   - Sarvam writes a 7-chakra reading
+   - SVG-rendered halo portrait (no image generation model used)
+
+6. DREAM INTERPRETER (₹30)
+   - Sarvam-only (no vision/camera) — free-text dream description
+   - Structured output: title, feeling, symbols, theme, Vedic note, guidance
+   - Standalone Dream Journal for saved entries
+
+7. VASTU AI (₹150)
+   - Room photo (upload or live camera) + manual 8-direction input + room type
+   - Single Gemini call returns score, 5-element balance, doshas, and
+     non-demolition remedies (upay)
+   - Standalone "My Spaces" gallery
+
+8. TEMPLE & PUJA BOOKING (demo e-commerce, no AI)
+   - Seeded catalog: 6 real temples, 13 puja types, ₹100–₹450 per devotee
+   - Live daily capacity tracking per date
+   - Confirmed booking → unique code (AV-XXXX-XXXX) + QR e-pass + PDF save/share
+
+9. MONEY WALLET
+   - Razorpay top-up with bonus tiers (₹500→+₹15, ₹1000→+₹50, ₹2000→+₹300)
+   - Pay-by-card or pay-from-wallet on every paid feature via a shared
+     PayMethodSheet component
+   - Full transaction ledger
+
+10. VIRTUAL PUJA — Interactive Shrine (FREE)
+    - 5 temple/deity scenes (Shiva/Vishnu/Ganesha/Devi/Krishna) with ambient
+      audio, bell, aarti thali animation, flower petals, dhoop smoke
+    - One-tap ~18-second automated puja sequence
+    - Fully client-side — no backend, no payment, no auth gate
+
+11. ASK ASTRAVEDA — AI Voice Consultation (₹99/call)
+    - Backend places a real OUTBOUND phone call via Sarvam Voice Agents (Samvaad)
+    - AI astrologer confirms birth details live, then delivers the reading
+      on the same call — no human astrologer, no LiveKit needed
+    - Call-now or schedule an IST time slot (auto-dialed by a Render cron job)
+    - Post-call webhook stores transcript, summary, and outcome
+
+12. DAILY HOROSCOPE (FREE, login-gated)
+    - All 12 zodiac signs generated once per day by a single Sarvam call,
+      grounded in that day's real computed panchang
+    - Cached in Neon — later reads never re-call the AI
+    - Kill switch env var stops all AI generation, falls back to cached/offline data
+
+13. TODAY'S COSMIC GUIDANCE (home screen, dynamic, public)
+    - Real sunrise/sunset, Rahu Kalam/Gulika Kalam/Yamaganda, Abhijit Muhurat,
+      Tithi/Nakshatra — all computed server-side via pyswisseph
+    - Lucky colour/mantra/blessing keyed to the weekday's ruling planet
+    - Same content for all users (not personalised)
+
+14. OUR ASTROLOGERS (showcase, no booking yet)
+    - Swipeable roster of real human astrologer profiles (bios, specialties,
+      languages, experience)
+    - Positioned as a future "real human consultation" offering, separate from
+      the automated Sarvam voice-call product
+
+15. MULTI-LANGUAGE SUPPORT
+    - 7 languages: English, Hindi, Odia, Tamil, Telugu, Marathi, Kannada
+    - Static UI strings via react-i18next; dynamic AI content translatable via
+      a Sarvam-translate backend endpoint
+    - Persisted language choice, device-locale fallback
+
+16. WELCOME EXPERIENCE
+    - Full-screen intro video overlay on cold start (Cloudinary-hosted)
+    - Animated "Welcome Robot" mascot: typewriter greeting, spoken via Sarvam
+      Bulbul TTS (on-device fallback), talking-mouth animation, feature showcase,
+      haptic feedback, re-greets returning signed-in users by name
+
+--------------------------------------------------------------------------------
+PRICING SUMMARY (Razorpay, all pay-per-use — no credit system yet)
+--------------------------------------------------------------------------------
+Kundali            ₹15
+Palm Reading        ₹40
+Face Reading        ₹45
+Aura Scan           ₹60
+Dream Interpreter   ₹30
+Vastu AI            ₹150
+Voice Consultation  ₹99
+Puja Booking        ₹100–₹450 per devotee
+Virtual Puja        FREE
+Daily Horoscope     FREE (login required)
+Cosmic Guidance     FREE (public)
+
+--------------------------------------------------------------------------------
+DESIGN LANGUAGE
+--------------------------------------------------------------------------------
+Cream background (#fffaf2), purple gradient (#8f29dd→#a72be6) for primary/AI
+actions, gold accents (#c18426/#a2660f) for credits/currency, pastel gradient
+tool cards, each major feature carrying its own accent colour (teal=Face,
+violet=Aura, indigo=Dream, terracotta=Vastu, rose/magenta=Palm, purple=Kundali/
+Voice, night-sky indigo for celestial screens like Horoscope/Astrologers).
+Real brand photography and illustrations throughout, hosted on Cloudinary —
+no placeholder art once real assets exist.

@@ -1,0 +1,15 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# editors
+.vscode/
+.idea/
+
+# env
+.env
+.env.local
+
+# dependencies (per-package .gitignore files handle their own node_modules,
+# this is a fallback for any future top-level installs)
+node_modules/

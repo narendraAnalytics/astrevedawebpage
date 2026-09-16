@@ -1,0 +1,8 @@
+Kundali : https://res.cloudinary.com/dkqbzwicr/image/upload/v1788625500/kundali_ia4oaj.png
+palmreading : https://res.cloudinary.com/dkqbzwicr/image/upload/v1788625851/palmreading_q10d1o.png
+facereading : https://res.cloudinary.com/dkqbzwicr/image/upload/v1788626138/facereading_ry0e2s.png
+aurascan : https://res.cloudinary.com/dkqbzwicr/image/upload/v1788627733/aurasign_ctimto.png
+dreaminterpetr : https://res.cloudinary.com/dkqbzwicr/image/upload/v1788628611/dreamintrupter_tmbxvi.png
+askastreveda : https://res.cloudinary.com/dkqbzwicr/image/upload/v1789564330/askastrevada_lyryed.png
+pujsandtemples : https://res.cloudinary.com/dkqbzwicr/image/upload/v1789564527/pujasandtemples_ytgvpk.png
+vastuai : https://res.cloudinary.com/dkqbzwicr/image/upload/v1788627479/houseai_fus43o.png
