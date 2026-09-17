@@ -28,12 +28,40 @@ export default function VoiceSpotlight() {
           <div className="relative grid grid-cols-1 md:grid-cols-[auto_1fr] items-center gap-10 md:gap-16">
             <Reveal>
               <div className="relative flex items-center justify-center w-32 h-32 sm:w-40 sm:h-40 mx-auto md:mx-0">
+                {/* Rotating conic-gradient orb glow */}
+                <span
+                  className="absolute inset-0 rounded-full av-orb-spin opacity-70"
+                  style={{
+                    background:
+                      "conic-gradient(from 0deg, rgba(244,210,138,.55), transparent 25%, transparent 50%, rgba(167,43,230,.45) 65%, transparent 85%, rgba(244,210,138,.55))",
+                    filter: "blur(6px)",
+                  }}
+                />
+                <span className="absolute inset-[6px] rounded-full bg-[#2A1650]" />
+
                 <span className="absolute inset-0 rounded-full border border-[rgba(244,210,138,.35)] av-pulse-ring" />
                 <span
                   className="absolute inset-3 rounded-full border border-[rgba(244,210,138,.25)] av-pulse-ring"
                   style={{ animationDelay: ".7s" }}
                 />
-                <span className="relative flex items-center justify-center w-20 h-20 rounded-full bg-[rgba(244,210,138,.14)] border border-[rgba(244,210,138,.4)] text-[#F4D28A]">
+
+                {/* Mini waveform bars around the mic */}
+                <div className="absolute inset-0" aria-hidden>
+                  {[0, 1, 2, 3, 4].map((i) => (
+                    <span
+                      key={i}
+                      className="absolute left-1/2 top-1/2 w-[3px] rounded-full bg-[#F4D28A] av-voice-bar"
+                      style={{
+                        height: 10,
+                        transform: `rotate(${(i - 2) * 26}deg) translateY(-46px)`,
+                        animationDelay: `${i * 0.15}s`,
+                        opacity: 0.75,
+                      }}
+                    />
+                  ))}
+                </div>
+
+                <span className="relative flex items-center justify-center w-20 h-20 rounded-full bg-[rgba(244,210,138,.14)] border border-[rgba(244,210,138,.4)] text-[#F4D28A] av-mic-breathe">
                   <Mic size={30} strokeWidth={1.8} />
                 </span>
               </div>
@@ -81,6 +109,30 @@ export default function VoiceSpotlight() {
           100% { transform: scale(1.35); opacity: 0; }
         }
         .av-pulse-ring { animation: av-pulse-ring 2.6s ease-out infinite; }
+
+        @keyframes av-orb-spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .av-orb-spin { animation: av-orb-spin 8s linear infinite; }
+
+        @keyframes av-mic-breathe {
+          0%, 100% { transform: scale(1); box-shadow: 0 0 0 rgba(244,210,138,0); }
+          50% { transform: scale(1.06); box-shadow: 0 0 22px rgba(244,210,138,.45); }
+        }
+        .av-mic-breathe { animation: av-mic-breathe 3.2s ease-in-out infinite; }
+
+        @keyframes av-voice-bar {
+          0%, 100% { height: 7px; opacity: .5; }
+          50% { height: 18px; opacity: 1; }
+        }
+        .av-voice-bar { animation: av-voice-bar 1.4s ease-in-out infinite; }
+
+        @media (prefers-reduced-motion: reduce) {
+          .av-pulse-ring, .av-orb-spin, .av-mic-breathe, .av-voice-bar {
+            animation: none !important;
+          }
+        }
       `}</style>
     </section>
   );

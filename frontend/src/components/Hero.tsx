@@ -7,6 +7,7 @@ import {
   useReducedMotion,
   useSpring,
 } from "framer-motion";
+import { Sparkles, Languages as LanguagesIcon, PhoneCall } from "lucide-react";
 import { HERO_VIDEOS, VIDEO_URL } from "@/lib/site";
 
 const FEATURE_STRIP = [
@@ -20,9 +21,9 @@ const FEATURE_STRIP = [
 ];
 
 const STATS = [
-  { value: "16+", label: "Divisional Charts" },
-  { value: "6", label: "Languages" },
-  { value: "12/min", label: "Live Consultation" },
+  { value: "16+", label: "Divisional Charts", Icon: Sparkles },
+  { value: "6", label: "Languages", Icon: LanguagesIcon },
+  { value: "12/min", label: "Live Consultation", Icon: PhoneCall },
 ];
 
 type FeatureCardData = { icon: string; title: string; sub: string };
@@ -296,12 +297,17 @@ export default function Hero() {
 
           <div className="av-stats flex items-center gap-9 mt-14 pt-[26px] border-t border-[rgba(255,247,230,.14)]">
             {STATS.map((s) => (
-              <div key={s.label}>
-                <div className="font-[family-name:var(--font-display)] text-[26px] text-[#F4D28A] font-semibold leading-none">
-                  {s.value}
-                </div>
-                <div className="text-[12px] text-[rgba(255,247,230,.6)] mt-1">
-                  {s.label}
+              <div key={s.label} className="group flex items-center gap-3 cursor-pointer">
+                <span className="flex items-center justify-center w-[34px] h-[34px] shrink-0 rounded-full text-[#F4D28A] bg-[rgba(244,210,138,.1)] border border-[rgba(244,210,138,.25)] transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-6">
+                  <s.Icon size={16} strokeWidth={2} />
+                </span>
+                <div>
+                  <div className="font-[family-name:var(--font-display)] text-[26px] text-[#F4D28A] font-semibold leading-none">
+                    {s.value}
+                  </div>
+                  <div className="text-[12px] text-[rgba(255,247,230,.6)] mt-1">
+                    {s.label}
+                  </div>
                 </div>
               </div>
             ))}
